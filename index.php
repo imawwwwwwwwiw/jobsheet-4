@@ -175,7 +175,7 @@ if(isset($_GET['hal'])){
                     <td><?= $no++ ?></td>
                     <td><?= $data['id_barang']?></td>
                     <td><?= $data['nama_barang']?></td>
-                    <td><?= $data['jumlah_pesan']?><?php echo "dus"?></td>
+                    <td><?= $data['jumlah_pesan']?><?php echo " dus"?></td>
                     <td><?= $data['tanggal_diterima']?></td>
                     <td>
                         <a href="index.php?hal=edit&id=<?=$data['id_barang']?>" class="btn btn-warning">Edit</a>
