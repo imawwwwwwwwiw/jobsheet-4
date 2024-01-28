@@ -5,6 +5,72 @@ $pass = '';
 $db = 'db_crud';
 
 $koneksi = mysqli_connect($host, $user, $pass, $db);
+
+//insert
+if(isset($_POST['bsimpan'])){
+    //update2 _tombol simpan-edit 
+    if(isset($_GET['hal']) == "edit"){
+    $edit = mysqli_query($koneksi, "UPDATE tbarang SET 
+                                           nama_barang = '$_POST[nama_barang]',
+                                           jumlah_pesan = '$_POST[jumlah_pesan]',
+                                           tanggal_diterima = '$_POST[tanggal_diterima]'
+                                    WHERE id_barang = '$_GET[id]'           
+                                   ");
+     if($edit) {
+        echo "<script>
+                alert('edit pesanan tersimpan!');
+                document.location='index.php';
+            </script>";
+    } else {
+        echo "<script>
+                alert('edit pesanan gagal!');
+                document.location='index.php';
+             </script>";
+    }
+}else {   $simpan = mysqli_query($koneksi, " INSERT INTO tbarang (id_barang, nama_barang, jumlah_pesan, tanggal_diterima)
+                                            VALUE ( '$_POST[id_barang]',
+                                                    '$_POST[nama_barang]',
+                                                    '$_POST[jumlah_pesan]',
+                                                    '$_POST[tanggal_diterima]')
+                                        ");
+
+    if($simpan) {
+        echo "<script>
+            alert('pesanan tersimpan!');
+            document.location='index.php';
+        </script>";
+    } else {
+        echo "<script>
+            alert('pesanan gagal!');
+            document.location='index.php';
+        </script>";
+    }
+}
+
+}
+
+//dek variabel untuk update
+$vid_barang = '';
+$vnama_barang = '';
+$vjumlah_pesan = '';
+$vtanggal_diterima = '';
+
+//update
+if(isset($_GET['hal'])){
+    if($_GET['hal'] == "edit"){
+        $tampil = mysqli_query($koneksi, "SELECT * FROM tbarang WHERE id_barang='$_GET[id]' ");
+        $data = mysqli_fetch_array($tampil);
+        if($data){
+            $vid_barang = $data['id_barang'];
+            $vnama_barang = $data['nama_barang'];
+            $vjumlah_pesan= $data['jumlah_pesan'];
+            $vtanggal_diterima = $data['tanggal_diterima'];
+        }
+    }
+}
+
+
+
 ?>
 <!doctype html>
 <html lang="en">
@@ -31,23 +97,23 @@ $koneksi = mysqli_connect($host, $user, $pass, $db);
                     <form action="" method="post">
                     <div class="mb-2">
                         <label class="form-label">Id barang</label>
-                        <input type="text" nama="id_barang" class="form-control" placeholder="input id barang">
+                        <input type="text" name="id_barang" value="<?=$vid_barang?>" class="form-control" placeholder="input id barang">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Nama barang</label>
-                        <input type="text" nama="nama_barang" class="form-control" placeholder="input nama barang">
+                        <input type="text" name="nama_barang" value="<?=$vnama_barang?>" class="form-control" placeholder="input nama barang">
                     </div>
                     <div class="row">
                         <div class="col">
                         <div class="mb-3">
                         <label class="form-label">Jumlah pesanan</label>
-                        <input type="number" nama="jumlah_pesan" class="form-control" placeholder="input jumlah barang">
+                        <input type="number" name="jumlah_pesan" value="<?=$vjumlah_pesan?>" class="form-control" placeholder="input jumlah barang">
                     </div>
                         </div>
                     <div class="col">
                         <div class="mb-3">
                         <label class="form-label">Tanggal diterima</label>
-                        <input type="date" nama="tanggal_diterima" class="form-control" placeholder="input tanggal diterima barang">
+                        <input type="date" name="tanggal_diterima" value="<?=$vtanggal_diterima?>" class="form-control" placeholder="input tanggal diterima barang">
                     </div>
                     </div>
                     <div class="text-center">
@@ -85,7 +151,25 @@ $koneksi = mysqli_connect($host, $user, $pass, $db);
                     <th>Tanggal diterima</th>
                     <th>Aksi</th>
                 </tr>
-               
+                <?php
+                //select
+                $no = 1;
+                $tampil = mysqli_query($koneksi, "SELECT * FROM tbarang");
+                while ($data = mysqli_fetch_array($tampil)) :
+                ?>
+                <tr>
+                    <td><?= $no++ ?></td>
+                    <td><?= $data['id_barang']?></td>
+                    <td><?= $data['nama_barang']?></td>
+                    <td><?= $data['jumlah_pesan']?><?php echo "dus"?></td>
+                    <td><?= $data['tanggal_diterima']?></td>
+                    <td>
+                        <a href="index.php?hal=edit&id=<?=$data['id_barang']?>" class="btn btn-warning">Edit</a>
+                        <a href="index.php?hal=hapus&id=<?=$data['id_barang']?>" class="btn btn-success">Hapus</a>
+                    </td>
+                </tr>
+
+                <?php endwhile;?>
             </table>
            
         </div>
