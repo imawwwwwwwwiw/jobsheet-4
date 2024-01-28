@@ -66,6 +66,20 @@ if(isset($_GET['hal'])){
             $vjumlah_pesan= $data['jumlah_pesan'];
             $vtanggal_diterima = $data['tanggal_diterima'];
         }
+        //delete 
+    }else if($_GET['hal'] == hapus){
+        $hapus = mysqli_query($koneksi, "DELETE FROM tbarang WHERE id_barang='$_GET[id]'");
+        if($hapus) {
+            echo "<script>
+                alert('pesanan terhapus!');
+                document.location='index.php';
+            </script>";
+        } else {
+            echo "<script>
+                alert('pesanan gagal terhapus!');
+                document.location='index.php';
+            </script>";
+        }
     }
 }
 
@@ -165,7 +179,7 @@ if(isset($_GET['hal'])){
                     <td><?= $data['tanggal_diterima']?></td>
                     <td>
                         <a href="index.php?hal=edit&id=<?=$data['id_barang']?>" class="btn btn-warning">Edit</a>
-                        <a href="index.php?hal=hapus&id=<?=$data['id_barang']?>" class="btn btn-success">Hapus</a>
+                        <a href="index.php?hal=hapus&id=<?=$data['id_barang']?>" class="btn btn-success" onclick="return confirm('apakah anda yakin ingin menghapus pemesanan?')">Hapus</a>
                     </td>
                 </tr>
 
