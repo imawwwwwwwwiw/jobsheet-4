@@ -67,7 +67,7 @@ if(isset($_GET['hal'])){
             $vtanggal_diterima = $data['tanggal_diterima'];
         }
         //delete 
-    }else if($_GET['hal'] == hapus){
+    }else if($_GET['hal'] == "hapus"){
         $hapus = mysqli_query($koneksi, "DELETE FROM tbarang WHERE id_barang='$_GET[id]'");
         if($hapus) {
             echo "<script>
@@ -168,7 +168,7 @@ if(isset($_GET['hal'])){
                 <?php
                 //select
                 $no = 1;
-                $tampil = mysqli_query($koneksi, "SELECT * FROM tbarang");
+                $tampil = mysqli_query($koneksi, "SELECT * FROM tbarang order by id_barang desc");
                 while ($data = mysqli_fetch_array($tampil)) :
                 ?>
                 <tr>
