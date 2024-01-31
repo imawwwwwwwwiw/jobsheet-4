@@ -13,7 +13,8 @@ if(isset($_POST['bsimpan'])){
     $edit = mysqli_query($koneksi, "UPDATE tbarang SET 
                                            nama_barang = '$_POST[nama_barang]',
                                            jumlah_pesan = '$_POST[jumlah_pesan]',
-                                           tanggal_diterima = '$_POST[tanggal_diterima]'
+                                           tanggal_diterima = '$_POST[tanggal_diterima]',
+                                           harga = '$_POST[harga]'
                                     WHERE id_barang = '$_GET[id]'           
                                    ");
      if($edit) {
@@ -27,11 +28,12 @@ if(isset($_POST['bsimpan'])){
                 document.location='index.php';
              </script>";
     }
-}else {   $simpan = mysqli_query($koneksi, " INSERT INTO tbarang (id_barang, nama_barang, jumlah_pesan, tanggal_diterima)
+}else {   $simpan = mysqli_query($koneksi, " INSERT INTO tbarang (id_barang, nama_barang, jumlah_pesan, tanggal_diterima, harga)
                                             VALUE ( '$_POST[id_barang]',
                                                     '$_POST[nama_barang]',
                                                     '$_POST[jumlah_pesan]',
-                                                    '$_POST[tanggal_diterima]')
+                                                    '$_POST[tanggal_diterima]',
+                                                    '$_POST[harga]')
                                         ");
 
     if($simpan) {
@@ -46,7 +48,6 @@ if(isset($_POST['bsimpan'])){
         </script>";
     }
 }
-
 }
 
 //dek variabel untuk update
@@ -54,6 +55,7 @@ $vid_barang = '';
 $vnama_barang = '';
 $vjumlah_pesan = '';
 $vtanggal_diterima = '';
+$vharga = '';
 
 //update
 if(isset($_GET['hal'])){
@@ -65,7 +67,9 @@ if(isset($_GET['hal'])){
             $vnama_barang = $data['nama_barang'];
             $vjumlah_pesan= $data['jumlah_pesan'];
             $vtanggal_diterima = $data['tanggal_diterima'];
+            $vharga = $data['harga'];
         }
+        
         //delete 
     }else if($_GET['hal'] == "hapus"){
         $hapus = mysqli_query($koneksi, "DELETE FROM tbarang WHERE id_barang='$_GET[id]'");
@@ -83,8 +87,6 @@ if(isset($_GET['hal'])){
     }
 }
 
-
-
 ?>
 <!doctype html>
 <html lang="en">
@@ -101,7 +103,7 @@ if(isset($_GET['hal'])){
     <!-- awal row -->
     <div class="row">
         <!-- awal col -->
-        <div class="col-md-4">
+        <div class="col-md-6">
             <div class="card">
                 <div class="card-header bg-danger text-light">
                  Form Input Pemesanan Mie Indomie
@@ -121,15 +123,26 @@ if(isset($_GET['hal'])){
                         <div class="col">
                         <div class="mb-3">
                         <label class="form-label">Jumlah pesanan</label>
-                        <input type="number" name="jumlah_pesan" value="<?=$vjumlah_pesan?>" class="form-control" placeholder="input jumlah barang">
+                        <input type="text" name="jumlah_pesan" value="<?=$vjumlah_pesan?>" class="form-control" placeholder="input jumlah barang">
                     </div>
-                        </div>
+                    </div>
+                    </div>
+                    <div class="row">
                     <div class="col">
                         <div class="mb-3">
                         <label class="form-label">Tanggal diterima</label>
                         <input type="date" name="tanggal_diterima" value="<?=$vtanggal_diterima?>" class="form-control" placeholder="input tanggal diterima barang">
+                        </div>
                     </div>
                     </div>
+                    <div class="row">
+                    <div class="col">
+                        <div class="mb-3">
+                        <label class="form-label">harga satuan</label>
+                        <input type="text" name="harga" value="<?=$vharga?>" class="form-control" placeholder="input harga barang">
+                        </div>
+                    </div>
+
                     <div class="text-center">
                         <hr>
                         <button class="btn btn-outline-danger" name="bsimpan" type="submit">Simpan</button>
@@ -163,13 +176,16 @@ if(isset($_GET['hal'])){
                     <th>Nama barang</th>
                     <th>Jumlah pesanan</th>
                     <th>Tanggal diterima</th>
+                    <th>Total harga</th>
                     <th>Aksi</th>
                 </tr>
                 <?php
+
                 //select
                 $no = 1;
                 $tampil = mysqli_query($koneksi, "SELECT * FROM tbarang order by id_barang desc");
                 while ($data = mysqli_fetch_array($tampil)) :
+                $total = $data['harga'] * $data['jumlah_pesan'];
                 ?>
                 <tr>
                     <td><?= $no++ ?></td>
@@ -177,7 +193,9 @@ if(isset($_GET['hal'])){
                     <td><?= $data['nama_barang']?></td>
                     <td><?= $data['jumlah_pesan']?><?php echo " dus"?></td>
                     <td><?= $data['tanggal_diterima']?></td>
+                    <td><?= "Rp " . number_format($total,0,',','.'); ?></td>
                     <td>
+            
                         <a href="index.php?hal=edit&id=<?=$data['id_barang']?>" class="btn btn-warning">Edit</a>
                         <a href="index.php?hal=hapus&id=<?=$data['id_barang']?>" class="btn btn-success" onclick="return confirm('apakah anda yakin ingin menghapus pemesanan?')">Hapus</a>
                     </td>
@@ -192,9 +210,6 @@ if(isset($_GET['hal'])){
         </div>
 </div>
 </div>
-
-
-
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
   </body>
